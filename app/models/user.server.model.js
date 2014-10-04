@@ -14,6 +14,10 @@ var validateLocalStrategyProperty = function(property) {
 	return ((this.provider !== 'local' && !this.updated) || property.length);
 };
 
+var validateEntranceCode = function(property) {
+	return (this.entranceCode === 'hoganmaps');
+};
+
 /**
  * A Validation function for local strategy password
  */
@@ -58,6 +62,11 @@ var UserSchema = new Schema({
 		type: String,
 		default: '',
 		validate: [validateLocalStrategyPassword, 'Password should be longer']
+	},
+	entranceCode: {
+		type: String,
+		default: '',
+		validate: [validateEntranceCode, 'Wrong Entrance Code!']
 	},
 	salt: {
 		type: String
