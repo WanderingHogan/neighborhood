@@ -1,0 +1,84 @@
+<section data-ng-controller="PlacesController" data-ng-init="find()">
+  <h4>{{message}}</h4>
+  <div class="col-lg-7">
+    <leaflet center="center" defaults="defaults" tiles="tiles" height="600px" width="100%" position="inherit"></leaflet>
+  </div>
+  <div class="col-lg-5">
+    <h5>Put the places you want to compare here.</h5>
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">1: </label>
+        <div class="col-sm-10">
+          <input type="text" ng-model="dynamicPopover" class="form-control">
+          <small>address on map</small>
+        </div>
+      </div>
+    </form>
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">2: </label>
+        <div class="col-sm-10">
+          <input type="text" ng-model="dynamicPopover" class="form-control">
+          <small>address on map</small>
+        </div>
+      </div>
+    </form>
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">3: </label>
+        <div class="col-sm-10">
+          <input type="text" ng-model="dynamicPopover" class="form-control">
+          <small>address on map</small>
+        </div>
+      </div>
+    </form>
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">4: </label>
+        <div class="col-sm-10">
+          <input type="text" ng-model="dynamicPopover" class="form-control">
+          <small>address on map</small>
+        </div>
+      </div>
+    </form>
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">5: </label>
+        <div class="col-sm-10">
+          <input type="text" ng-model="dynamicPopover" class="form-control">
+          <small>address on map</small>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-lg-5">
+    <h5>Put places you frequent here, like work or school.</h5>
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">1: </label>
+        <div class="col-sm-10">
+          <input type="text" ng-model="dynamicPopover" class="form-control">
+          <small>address on map</small>
+        </div>
+      </div>
+    </form>
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">2: </label>
+        <div class="col-sm-10">
+          <input type="text" ng-model="dynamicPopover" class="form-control">
+          <small>address on map</small>
+        </div>
+      </div>
+    </form>
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">3: </label>
+        <div class="col-sm-10">
+          <input type="text" ng-model="dynamicPopover" class="form-control">
+          <small>address on map</small>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

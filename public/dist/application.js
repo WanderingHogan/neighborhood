@@ -41,97 +41,29 @@ angular.element(document).ready(function () {
   angular.bootstrap(document, [ApplicationConfiguration.applicationModuleName]);
 });'use strict';
 // Use Applicaion configuration module to register a new module
-ApplicationConfiguration.registerModule('articles');'use strict';
-// Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('core');'use strict';
+// Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('emergencies');'use strict';
+// Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('environments');'use strict';
+// Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('people');'use strict';
+// Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('places');'use strict';
+// Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('transporations');'use strict';
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('users');'use strict';
 // Configuring the Articles module
-angular.module('articles').run([
+angular.module('places').run([
   'Menus',
   function (Menus) {
     // Set top bar menu items
-    Menus.addMenuItem('topbar', 'Articles', 'articles', 'dropdown', '/articles(/create)?');
-    Menus.addSubMenuItem('topbar', 'articles', 'List Articles', 'articles');
-    Menus.addSubMenuItem('topbar', 'articles', 'New Article', 'articles/create');
-  }
-]);'use strict';
-// Setting up route
-angular.module('articles').config([
-  '$stateProvider',
-  function ($stateProvider) {
-    // Articles state routing
-    $stateProvider.state('listArticles', {
-      url: '/articles',
-      templateUrl: 'modules/articles/views/list-articles.client.view.html'
-    }).state('createArticle', {
-      url: '/articles/create',
-      templateUrl: 'modules/articles/views/create-article.client.view.html'
-    }).state('viewArticle', {
-      url: '/articles/:articleId',
-      templateUrl: 'modules/articles/views/view-article.client.view.html'
-    }).state('editArticle', {
-      url: '/articles/:articleId/edit',
-      templateUrl: 'modules/articles/views/edit-article.client.view.html'
-    });
-  }
-]);'use strict';
-angular.module('articles').controller('ArticlesController', [
-  '$scope',
-  '$stateParams',
-  '$location',
-  'Authentication',
-  'Articles',
-  function ($scope, $stateParams, $location, Authentication, Articles) {
-    $scope.authentication = Authentication;
-    $scope.create = function () {
-      var article = new Articles({
-          title: this.title,
-          content: this.content
-        });
-      article.$save(function (response) {
-        $location.path('articles/' + response._id);
-        $scope.title = '';
-        $scope.content = '';
-      }, function (errorResponse) {
-        $scope.error = errorResponse.data.message;
-      });
-    };
-    $scope.remove = function (article) {
-      if (article) {
-        article.$remove();
-        for (var i in $scope.articles) {
-          if ($scope.articles[i] === article) {
-            $scope.articles.splice(i, 1);
-          }
-        }
-      } else {
-        $scope.article.$remove(function () {
-          $location.path('articles');
-        });
-      }
-    };
-    $scope.update = function () {
-      var article = $scope.article;
-      article.$update(function () {
-        $location.path('articles/' + article._id);
-      }, function (errorResponse) {
-        $scope.error = errorResponse.data.message;
-      });
-    };
-    $scope.find = function () {
-      $scope.articles = Articles.query();
-    };
-    $scope.findOne = function () {
-      $scope.article = Articles.get({ articleId: $stateParams.articleId });
-    };
-  }
-]);'use strict';
-//Articles service used for communicating with the articles REST endpoints
-angular.module('articles').factory('Articles', [
-  '$resource',
-  function ($resource) {
-    return $resource('articles/:articleId', { articleId: '@_id' }, { update: { method: 'PUT' } });
+    Menus.addMenuItem('topbar', 'Places', 'places', '/places(/create)?');
+    Menus.addMenuItem('topbar', 'People', 'people', '/people(/create)?');
+    Menus.addMenuItem('topbar', 'Environment', 'environments', '/environments(/create)?');
+    Menus.addMenuItem('topbar', 'Emergency', 'emergencies', '/emergencies(/create)?');
+    Menus.addMenuItem('topbar', 'Transporation', 'transporations', '/transporations(/create)?');
   }
 ]);'use strict';
 // Setting up route
@@ -171,21 +103,63 @@ angular.module('core').controller('HomeController', [
   function ($scope, Authentication) {
     // This provides Authentication context.
     $scope.authentication = Authentication;
+    angular.extend($scope, {
+      center: {
+        lat: 40.095,
+        lng: -3.823,
+        zoom: 4
+      },
+      defaults: { scrollWheelZoom: false }
+    });
   }
-]);'use strict';
+]);// 'use strict';
+//
+// angular.module('core').directive('map', [
+// 	function() {
+// 		return {
+// 			template: '<div></div>',
+// 			restrict: 'E',
+// 			link: function postLink(scope, element, attrs) {
+// 				angular.extend($scope, {
+// 				    defaults: {
+// 				        tileLayer: "http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png",
+// 				        maxZoom: 14,
+// 				        path: {
+// 				            weight: 10,
+// 				            color: '#800000',
+// 				            opacity: 1
+// 				        }
+// 				    }
+// 				});
+// 				angular.extend($scope, {
+// 				    center: {
+// 				        lat: 51.505,
+// 				        lng: -0.09,
+// 				        zoom: 8
+// 				    }
+// 				});
+// 			}
+// 		};
+// 	}
+// ]);
+'use strict';
 //Menu service used for managing  menus
 angular.module('core').service('Menus', [function () {
     // Define a set of default roles
-    this.defaultRoles = ['user'];
+    this.defaultRoles = ['*'];
     // Define the menus object
     this.menus = {};
     // A private function for rendering decision 
     var shouldRender = function (user) {
       if (user) {
-        for (var userRoleIndex in user.roles) {
-          for (var roleIndex in this.roles) {
-            if (this.roles[roleIndex] === user.roles[userRoleIndex]) {
-              return true;
+        if (!!~this.roles.indexOf('*')) {
+          return true;
+        } else {
+          for (var userRoleIndex in user.roles) {
+            for (var roleIndex in this.roles) {
+              if (this.roles[roleIndex] === user.roles[userRoleIndex]) {
+                return true;
+              }
             }
           }
         }
@@ -245,7 +219,7 @@ angular.module('core').service('Menus', [function () {
         menuItemClass: menuItemType,
         uiRoute: menuItemUIRoute || '/' + menuItemURL,
         isPublic: isPublic === null || typeof isPublic === 'undefined' ? this.menus[menuId].isPublic : isPublic,
-        roles: roles || this.defaultRoles,
+        roles: roles === null || typeof roles === 'undefined' ? this.menus[menuId].roles : roles,
         position: position || 0,
         items: [],
         shouldRender: shouldRender
@@ -266,7 +240,7 @@ angular.module('core').service('Menus', [function () {
             link: menuItemURL,
             uiRoute: menuItemUIRoute || '/' + menuItemURL,
             isPublic: isPublic === null || typeof isPublic === 'undefined' ? this.menus[menuId].items[itemIndex].isPublic : isPublic,
-            roles: roles || this.defaultRoles,
+            roles: roles === null || typeof roles === 'undefined' ? this.menus[menuId].items[itemIndex].roles : roles,
             position: position || 0,
             shouldRender: shouldRender
           });
@@ -305,7 +279,462 @@ angular.module('core').service('Menus', [function () {
     };
     //Adding the topbar menu
     this.addMenu('topbar');
-  }]);'use strict';
+  }]);// 'use strict';
+// // Configuring the Articles module
+// angular.module('emergencies').run(['Menus',
+// 	function(Menus) {
+// 		// Set top bar menu items
+// 		Menus.addMenuItem('topbar', 'Emergencies', 'emergencies', '/emergencies(/create)?');
+// 	}
+// ]);
+'use strict';
+//Setting up route
+angular.module('emergencies').config([
+  '$stateProvider',
+  function ($stateProvider) {
+    // Emergencies state routing
+    $stateProvider.state('listEmergencies', {
+      url: '/emergencies',
+      templateUrl: 'modules/emergencies/views/list-emergencies.client.view.html'
+    }).state('createEmergency', {
+      url: '/emergencies/create',
+      templateUrl: 'modules/emergencies/views/create-emergency.client.view.html'
+    }).state('viewEmergency', {
+      url: '/emergencies/:emergencyId',
+      templateUrl: 'modules/emergencies/views/view-emergency.client.view.html'
+    }).state('editEmergency', {
+      url: '/emergencies/:emergencyId/edit',
+      templateUrl: 'modules/emergencies/views/edit-emergency.client.view.html'
+    });
+  }
+]);'use strict';
+// Emergencies controller
+angular.module('emergencies').controller('EmergenciesController', [
+  '$scope',
+  '$stateParams',
+  '$location',
+  'Authentication',
+  'Emergencies',
+  function ($scope, $stateParams, $location, Authentication, Emergencies) {
+    $scope.authentication = Authentication;
+    // Create new Emergency
+    $scope.create = function () {
+      // Create new Emergency object
+      var emergency = new Emergencies({ name: this.name });
+      // Redirect after save
+      emergency.$save(function (response) {
+        $location.path('emergencies/' + response._id);
+        // Clear form fields
+        $scope.name = '';
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Remove existing Emergency
+    $scope.remove = function (emergency) {
+      if (emergency) {
+        emergency.$remove();
+        for (var i in $scope.emergencies) {
+          if ($scope.emergencies[i] === emergency) {
+            $scope.emergencies.splice(i, 1);
+          }
+        }
+      } else {
+        $scope.emergency.$remove(function () {
+          $location.path('emergencies');
+        });
+      }
+    };
+    // Update existing Emergency
+    $scope.update = function () {
+      var emergency = $scope.emergency;
+      emergency.$update(function () {
+        $location.path('emergencies/' + emergency._id);
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Find a list of Emergencies
+    $scope.find = function () {
+      $scope.emergencies = Emergencies.query();
+    };
+    // Find existing Emergency
+    $scope.findOne = function () {
+      $scope.emergency = Emergencies.get({ emergencyId: $stateParams.emergencyId });
+    };
+  }
+]);'use strict';
+//Emergencies service used to communicate Emergencies REST endpoints
+angular.module('emergencies').factory('Emergencies', [
+  '$resource',
+  function ($resource) {
+    return $resource('emergencies/:emergencyId', { emergencyId: '@_id' }, { update: { method: 'PUT' } });
+  }
+]);// 'use strict';
+// // Configuring the Articles module
+// angular.module('environments').run(['Menus',
+// 	function(Menus) {
+// 		// Set top bar menu items
+// 		Menus.addMenuItem('topbar', 'Environment', 'environments', '/environments(/create)?');
+// 	}
+// ]);
+'use strict';
+//Setting up route
+angular.module('environments').config([
+  '$stateProvider',
+  function ($stateProvider) {
+    // Environments state routing
+    $stateProvider.state('listEnvironments', {
+      url: '/environments',
+      templateUrl: 'modules/environments/views/list-environments.client.view.html'
+    }).state('createEnvironment', {
+      url: '/environments/create',
+      templateUrl: 'modules/environments/views/create-environment.client.view.html'
+    }).state('viewEnvironment', {
+      url: '/environments/:environmentId',
+      templateUrl: 'modules/environments/views/view-environment.client.view.html'
+    }).state('editEnvironment', {
+      url: '/environments/:environmentId/edit',
+      templateUrl: 'modules/environments/views/edit-environment.client.view.html'
+    });
+  }
+]);'use strict';
+// Environments controller
+angular.module('environments').controller('EnvironmentsController', [
+  '$scope',
+  '$stateParams',
+  '$location',
+  'Authentication',
+  'Environments',
+  function ($scope, $stateParams, $location, Authentication, Environments) {
+    $scope.authentication = Authentication;
+    // Create new Environment
+    $scope.create = function () {
+      // Create new Environment object
+      var environment = new Environments({ name: this.name });
+      // Redirect after save
+      environment.$save(function (response) {
+        $location.path('environments/' + response._id);
+        // Clear form fields
+        $scope.name = '';
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Remove existing Environment
+    $scope.remove = function (environment) {
+      if (environment) {
+        environment.$remove();
+        for (var i in $scope.environments) {
+          if ($scope.environments[i] === environment) {
+            $scope.environments.splice(i, 1);
+          }
+        }
+      } else {
+        $scope.environment.$remove(function () {
+          $location.path('environments');
+        });
+      }
+    };
+    // Update existing Environment
+    $scope.update = function () {
+      var environment = $scope.environment;
+      environment.$update(function () {
+        $location.path('environments/' + environment._id);
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Find a list of Environments
+    $scope.find = function () {
+      $scope.environments = Environments.query();
+    };
+    // Find existing Environment
+    $scope.findOne = function () {
+      $scope.environment = Environments.get({ environmentId: $stateParams.environmentId });
+    };
+  }
+]);'use strict';
+//Environments service used to communicate Environments REST endpoints
+angular.module('environments').factory('Environments', [
+  '$resource',
+  function ($resource) {
+    return $resource('environments/:environmentId', { environmentId: '@_id' }, { update: { method: 'PUT' } });
+  }
+]);// 'use strict';
+// // Configuring the Articles module
+// angular.module('people').run(['Menus',
+// 	function(Menus) {
+// 		// Set top bar menu items
+// 		Menus.addMenuItem('topbar', 'People', 'people', '/people(/create)?');
+// 	}
+// ]);
+'use strict';
+//Setting up route
+angular.module('people').config([
+  '$stateProvider',
+  function ($stateProvider) {
+    // People state routing
+    $stateProvider.state('listPeople', {
+      url: '/people',
+      templateUrl: 'modules/people/views/list-people.client.view.html'
+    }).state('createPerson', {
+      url: '/people/create',
+      templateUrl: 'modules/people/views/create-person.client.view.html'
+    }).state('viewPerson', {
+      url: '/people/:personId',
+      templateUrl: 'modules/people/views/view-person.client.view.html'
+    }).state('editPerson', {
+      url: '/people/:personId/edit',
+      templateUrl: 'modules/people/views/edit-person.client.view.html'
+    });
+  }
+]);'use strict';
+// People controller
+angular.module('people').controller('PeopleController', [
+  '$scope',
+  '$stateParams',
+  '$location',
+  'Authentication',
+  'People',
+  function ($scope, $stateParams, $location, Authentication, People) {
+    $scope.authentication = Authentication;
+    // Create new Person
+    $scope.create = function () {
+      // Create new Person object
+      var person = new People({ name: this.name });
+      // Redirect after save
+      person.$save(function (response) {
+        $location.path('people/' + response._id);
+        // Clear form fields
+        $scope.name = '';
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Remove existing Person
+    $scope.remove = function (person) {
+      if (person) {
+        person.$remove();
+        for (var i in $scope.people) {
+          if ($scope.people[i] === person) {
+            $scope.people.splice(i, 1);
+          }
+        }
+      } else {
+        $scope.person.$remove(function () {
+          $location.path('people');
+        });
+      }
+    };
+    // Update existing Person
+    $scope.update = function () {
+      var person = $scope.person;
+      person.$update(function () {
+        $location.path('people/' + person._id);
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Find a list of People
+    $scope.find = function () {
+      $scope.people = People.query();
+    };
+    // Find existing Person
+    $scope.findOne = function () {
+      $scope.person = People.get({ personId: $stateParams.personId });
+    };
+  }
+]);'use strict';
+//People service used to communicate People REST endpoints
+angular.module('people').factory('People', [
+  '$resource',
+  function ($resource) {
+    return $resource('people/:personId', { personId: '@_id' }, { update: { method: 'PUT' } });
+  }
+]);// 'use strict';
+// // Configuring the Articles module
+// angular.module('places').run(['Menus',
+// 	function(Menus) {
+// 		// Set top bar menu items
+// 		Menus.addMenuItem('topbar', 'Places', 'places', '/places(/create)?');
+// 	}
+// ]);
+'use strict';
+//Setting up route
+angular.module('places').config([
+  '$stateProvider',
+  function ($stateProvider) {
+    // Places state routing
+    $stateProvider.state('listPlaces', {
+      url: '/places',
+      templateUrl: 'modules/places/views/list-places.client.view.html'
+    }).state('createPlace', {
+      url: '/places/create',
+      templateUrl: 'modules/places/views/create-place.client.view.html'
+    }).state('viewPlace', {
+      url: '/places/:placeId',
+      templateUrl: 'modules/places/views/view-place.client.view.html'
+    }).state('editPlace', {
+      url: '/places/:placeId/edit',
+      templateUrl: 'modules/places/views/edit-place.client.view.html'
+    });
+  }
+]);'use strict';
+// Places controller
+angular.module('places').controller('PlacesController', [
+  '$scope',
+  '$stateParams',
+  '$location',
+  'Authentication',
+  'Places',
+  function ($scope, $stateParams, $location, Authentication, Places) {
+    $scope.authentication = Authentication;
+    // Create new Place
+    $scope.create = function () {
+      // Create new Place object
+      var place = new Places({ name: this.name });
+      // Redirect after save
+      place.$save(function (response) {
+        $location.path('places/' + response._id);
+        // Clear form fields
+        $scope.name = '';
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Remove existing Place
+    $scope.remove = function (place) {
+      if (place) {
+        place.$remove();
+        for (var i in $scope.places) {
+          if ($scope.places[i] === place) {
+            $scope.places.splice(i, 1);
+          }
+        }
+      } else {
+        $scope.place.$remove(function () {
+          $location.path('places');
+        });
+      }
+    };
+    // Update existing Place
+    $scope.update = function () {
+      var place = $scope.place;
+      place.$update(function () {
+        $location.path('places/' + place._id);
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Find a list of Places
+    $scope.find = function () {
+      $scope.places = Places.query();
+    };
+    // Find existing Place
+    $scope.findOne = function () {
+      $scope.place = Places.get({ placeId: $stateParams.placeId });
+    };
+  }
+]);'use strict';
+//Places service used to communicate Places REST endpoints
+angular.module('places').factory('Places', [
+  '$resource',
+  function ($resource) {
+    return $resource('places/:placeId', { placeId: '@_id' }, { update: { method: 'PUT' } });
+  }
+]);// 'use strict';
+// // Configuring the Articles module
+// angular.module('transporations').run(['Menus',
+// 	function(Menus) {
+// 		// Set top bar menu items
+// 		Menus.addMenuItem('topbar', 'Transporations', 'transporations', '/transporations(/create)?');
+// 	}
+// ]);
+'use strict';
+//Setting up route
+angular.module('transporations').config([
+  '$stateProvider',
+  function ($stateProvider) {
+    // Transporations state routing
+    $stateProvider.state('listTransporations', {
+      url: '/transporations',
+      templateUrl: 'modules/transporations/views/list-transporations.client.view.html'
+    }).state('createTransporation', {
+      url: '/transporations/create',
+      templateUrl: 'modules/transporations/views/create-transporation.client.view.html'
+    }).state('viewTransporation', {
+      url: '/transporations/:transporationId',
+      templateUrl: 'modules/transporations/views/view-transporation.client.view.html'
+    }).state('editTransporation', {
+      url: '/transporations/:transporationId/edit',
+      templateUrl: 'modules/transporations/views/edit-transporation.client.view.html'
+    });
+  }
+]);'use strict';
+// Transporations controller
+angular.module('transporations').controller('TransporationsController', [
+  '$scope',
+  '$stateParams',
+  '$location',
+  'Authentication',
+  'Transporations',
+  function ($scope, $stateParams, $location, Authentication, Transporations) {
+    $scope.authentication = Authentication;
+    // Create new Transporation
+    $scope.create = function () {
+      // Create new Transporation object
+      var transporation = new Transporations({ name: this.name });
+      // Redirect after save
+      transporation.$save(function (response) {
+        $location.path('transporations/' + response._id);
+        // Clear form fields
+        $scope.name = '';
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Remove existing Transporation
+    $scope.remove = function (transporation) {
+      if (transporation) {
+        transporation.$remove();
+        for (var i in $scope.transporations) {
+          if ($scope.transporations[i] === transporation) {
+            $scope.transporations.splice(i, 1);
+          }
+        }
+      } else {
+        $scope.transporation.$remove(function () {
+          $location.path('transporations');
+        });
+      }
+    };
+    // Update existing Transporation
+    $scope.update = function () {
+      var transporation = $scope.transporation;
+      transporation.$update(function () {
+        $location.path('transporations/' + transporation._id);
+      }, function (errorResponse) {
+        $scope.error = errorResponse.data.message;
+      });
+    };
+    // Find a list of Transporations
+    $scope.find = function () {
+      $scope.transporations = Transporations.query();
+    };
+    // Find existing Transporation
+    $scope.findOne = function () {
+      $scope.transporation = Transporations.get({ transporationId: $stateParams.transporationId });
+    };
+  }
+]);'use strict';
+//Transporations service used to communicate Transporations REST endpoints
+angular.module('transporations').factory('Transporations', [
+  '$resource',
+  function ($resource) {
+    return $resource('transporations/:transporationId', { transporationId: '@_id' }, { update: { method: 'PUT' } });
+  }
+]);'use strict';
 // Config HTTP Error Handling
 angular.module('users').config([
   '$httpProvider',

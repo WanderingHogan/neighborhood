@@ -1,5 +1,5 @@
 <section data-ng-controller="HomeController">
-	<div>
+	<div data-ng-hide="authentication.user">
 		<h2>Get a Detailed View of Someplace New.</h2>
 		<h3>Coming Fall, 2014</h3>
 		<p><b>Be</b>Locate helps you objectively compare different places, be they homes to rent, homes to buy, locations for a business, or detailed neighborhood information before booking a hotel. We provide up-to-date, highly detailed reports, maps, and data about locations you are about to invest your time and money in.</p>
@@ -18,10 +18,10 @@
 			<div class="col-lg-4">
 				<div class="panel panel-primary">
 					<div class="panel-heading">
-						<h3 class="panel-title">Crime & Emergency <i class="fa fa-ambulance"></i></h3>
+						<h3 class="panel-title">Emergency <i class="fa fa-ambulance"></i></h3>
 					</div>
 					<div class="panel-body">
-						See where each location is, relative to crime information, sex offendors, distance to hospitals and emergency medical facilities, and more.
+						See where each location is, relative to crime and emergency services information, sex offendors, distance to hospitals and emergency medical facilities, and more.
 					</div>
 				</div>
 			</div>
@@ -68,5 +68,11 @@
 				</div>
 			</div>
 		</div>
+	</div>
+	<!-- -->
+	<!-- -->
+	<!-- -->
+	<div data-ng-show="authentication.user">
+		<h2>{{welcome}}</h2>
 	</div>
 </section>
