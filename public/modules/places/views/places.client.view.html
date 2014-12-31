@@ -1,74 +1,27 @@
 <section data-ng-controller="PlacesController" data-ng-init="find()">
   <h4>{{message}}</h4>
   <div class="col-lg-7">
-    <leaflet center="center" defaults="defaults" tiles="tiles" height="600px" width="100%" position="inherit"></leaflet>
+    <leaflet center="center" defaults="defaults" markers="markers" event-broadcast="events" tiles="tiles" height="600px" width="100%" position="inherit"></leaflet>
   </div>
   <div class="col-lg-5">
     <h5>Put the places you want to compare here.</h5>
-    <form class="form-horizontal">
+    <form class="form-horizontal" ng-repeat="myMarker in myMarkers">
       <div class="form-group">
-        <label class="col-sm-2 control-label"><img src="modules/core/img/map_icons/number_1.png" class="img-responsive" alt="Responsive image"></label>
+        <label class="col-sm-2 control-label"><img ng-src="{{myMarker.icon}}" class="img-responsive" alt="Responsive image"></label>
         <div class="col-sm-10">
-          <input type="text" class="form-control">
+          <input type="text" class="form-control" ng-enter="geocode(myMarker.model_name, text)" ng-model="text">
         </div>
       </div>
     </form>
-    <form class="form-horizontal">
-      <div class="form-group">
-        <label class="col-sm-2 control-label"><img src="modules/core/img/map_icons/number_2.png" class="img-responsive" alt="Responsive image"></label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control">
-        </div>
-      </div>
-    </form>
-    <form class="form-horizontal">
-      <div class="form-group">
-        <label class="col-sm-2 control-label"><img src="modules/core/img/map_icons/number_3.png" class="img-responsive" alt="Responsive image"></label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control">
-        </div>
-      </div>
-    </form>
-    <form class="form-horizontal">
-      <div class="form-group">
-        <label class="col-sm-2 control-label"><img src="modules/core/img/map_icons/number_4.png" class="img-responsive" alt="Responsive image"></label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control">
-        </div>
-      </div>
-    </form>
-    <form class="form-horizontal">
-      <div class="form-group">
-        <label class="col-sm-2 control-label"><img src="modules/core/img/map_icons/number_5.png" class="img-responsive" alt="Responsive image"></label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control">
-        </div>
-      </div>
-    </form>
+
   </div>
   <div class="col-lg-5">
     <h5>Put places you frequent here, like work or school.</h5>
-    <form class="form-horizontal">
+    <form class="form-horizontal" ng-repeat="favorite_place in frequentVisit">
       <div class="form-group">
-        <label class="col-sm-2 control-label"><img src="modules/core/img/map_icons/number_1_purple.png" class="img-responsive" alt="Responsive image"></label>
+        <label class="col-sm-2 control-label"><img ng-src="{{favorite_place.icon}}" class="img-responsive" alt="Responsive image"></label>
         <div class="col-sm-10">
-          <input type="text" class="form-control">
-        </div>
-      </div>
-    </form>
-    <form class="form-horizontal">
-      <div class="form-group">
-        <label class="col-sm-2 control-label"><img src="modules/core/img/map_icons/number_2_purple.png" class="img-responsive" alt="Responsive image"></label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control">
-        </div>
-      </div>
-    </form>
-    <form class="form-horizontal">
-      <div class="form-group">
-        <label class="col-sm-2 control-label"><img src="modules/core/img/map_icons/number_3_purple.png" class="img-responsive" alt="Responsive image"></label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control">
+          <input type="text" class="form-control" ng-enter="geocode(favorite_place.model_name, text)" ng-model="text">
         </div>
       </div>
     </form>
